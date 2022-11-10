@@ -1,23 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState, useEffect } from 'react'
+import Menu from './components/Menu'
+import Content from './components/Content'
 
 function App() {
+  
+  const [getSelected, setSelected] = useState("")
+  const [getData, setData] = useState({})
+  
+  const selector = (menuItem) => {
+    setSelected(menuItem)
+  }
+  
+  useEffect(() => {
+      fetch("http://localhost:3000/addresses")
+            .then(res => res.json())
+            .then((data) => setData({"addresses": data}))
+    }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Menu data={getData} selector={selector} selected={getSelected}/>
+      {getSelected === "" ? null : <Content data={getData[getSelected]} />}
     </div>
   );
 }
